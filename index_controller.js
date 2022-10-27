@@ -37,9 +37,22 @@ const createJson = (response, res) => {
 		}
 
 		const messageSelector = thread.children('dd')[i];
-		const message = $(messageSelector)
+		const rawMessage = $(messageSelector)
 			.text()
 			.trim();
+
+		//Format line breaks and returns correctly for message
+		const spaceRegex = /\s/g;
+		const placeholderMessage = rawMessage.replace(spaceRegex, '<br/>');
+
+		const carriageReturnRegex = /\<br\/\>\<br\/\>\<br\/\>/g;
+		const CRMessage = placeholderMessage.replace(carriageReturnRegex, '\n\n');
+
+		const linebreakRegex = /\<br\/\>\<br\/\>/g;
+		const LBMessage = CRMessage.replace(linebreakRegex, '\n');
+
+		const singleSpaceRegex = /\<br\/\>/g;
+		const message = LBMessage.replace(singleSpaceRegex, ' ');
 
 		posts.push({ postId, name, date, time, userId, message });
 	}
