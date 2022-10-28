@@ -3,6 +3,8 @@ const iconv = require('iconv-lite');
 
 const cheerio = require('cheerio');
 
+const validator = require('express-validator');
+
 const baseUrl = 'https://nozomi.2ch.sc/test/read.cgi/doujin/';
 
 const createJson = (response, res) => {
@@ -62,22 +64,60 @@ const createJson = (response, res) => {
 	res.json({ title, totalCount, posts });
 };
 
-module.exports.posts_get_all = function (req, res) {
-	axios(baseUrl + req.params.threadId, { responseType: 'arraybuffer' })
-		.then(response => {
-			createJson(response, res);
-		})
-		.catch(err => {
-			res.status(err.response.status);
-			res.json(err);
-		});
-};
+module.exports.posts_get_all = [
+	validator
+		.param('threadId', 'Invalid ID')
+		.trim()
+		.escape(),
 
-module.exports.posts_get_l50 = function (req, res) {
-	axios(baseUrl + req.params.threadId + '/l50', { responseType: 'arraybuffer' })
-		.then(response => createJson(response, res))
-		.catch(err => {
-			res.status(err.response.status);
-			res.json(err);
-		});
-};
+	function (req, res) {
+		var errors = validator.validationResult(req);
+
+		if (!errors.isEmpty()) {
+			res.json({
+				errors: errors.array()
+			});
+			return;
+		}
+
+		axios(baseUrl + req.params.threadId, { responseType: 'arraybuffer' })
+			.then(response => {
+				createJson(response, res);
+			})
+			.catch(err => {
+				if (err.response) {
+					res.status(err.response.status);
+				}
+				res.json(err);
+			});
+	}
+];
+
+module.exports.posts_get_l50 = [
+	validator
+		.param('threadId', 'Invalid ID')
+		.trim()
+		.escape(),
+
+	function (req, res) {
+		var errors = validator.validationResult(req);
+
+		if (!errors.isEmpty()) {
+			res.json({
+				errors: errors.array()
+			});
+			return;
+		}
+
+		axios(baseUrl + req.params.threadId + '/l50', {
+			responseType: 'arraybuffer'
+		})
+			.then(response => createJson(response, res))
+			.catch(err => {
+				if (err.response) {
+					res.status(err.response.status);
+				}
+				res.json(err);
+			});
+	}
+];
