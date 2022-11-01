@@ -14,4 +14,6 @@ router.get('/:threadId', index_controller.posts_get_all);
 
 router.get('/:threadId/last50', index_controller.posts_get_l50);
 
+router.get('/:threadId/new/:postId', index_controller.posts_get_new);
+
 module.exports = router;

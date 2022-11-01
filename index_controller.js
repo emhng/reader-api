@@ -121,3 +121,37 @@ module.exports.posts_get_l50 = [
 			});
 	}
 ];
+
+module.exports.posts_get_new = [
+	validator
+		.param('threadId', 'Invalid ID')
+		.trim()
+		.escape(),
+
+	validator
+		.param('postId', 'Invalid post ID')
+		.trim()
+		.escape(),
+
+	function (req, res) {
+		var errors = validator.validationResult(req);
+
+		if (!errors.isEmpty()) {
+			res.json({
+				errors: errors.array()
+			});
+			return;
+		}
+
+		axios(baseUrl + req.params.threadId + '/' + req.params.postId + 'n-', {
+			responseType: 'arraybuffer'
+		})
+			.then(response => createJson(response, res))
+			.catch(err => {
+				if (err.response) {
+					res.status(err.response.status);
+				}
+				res.json(err);
+			});
+	}
+];
