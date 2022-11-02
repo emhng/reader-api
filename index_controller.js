@@ -13,6 +13,7 @@ const createJson = (response, res) => {
 
 	const title = $('h1', html).text();
 	const thread = $('dl.thread', html);
+	let updateDate, updateTime;
 	const posts = [];
 
 	const count = thread.children('dt').length;
@@ -38,6 +39,11 @@ const createJson = (response, res) => {
 			userId = undefined;
 		}
 
+		if (i === count - 1) {
+			updateDate = date;
+			updateTime = time;
+		}
+
 		const messageSelector = thread.children('dd')[i];
 		const rawMessage = $(messageSelector)
 			.text()
@@ -61,7 +67,7 @@ const createJson = (response, res) => {
 
 	const totalCount = posts[posts.length - 1].postId;
 
-	res.json({ title, totalCount, posts });
+	res.json({ title, totalCount, updateDate, updateTime, posts });
 };
 
 module.exports.posts_get_all = [
