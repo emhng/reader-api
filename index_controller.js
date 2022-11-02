@@ -7,7 +7,7 @@ const validator = require('express-validator');
 
 const baseUrl = 'https://nozomi.2ch.sc/test/read.cgi/doujin/';
 
-const createJson = (response, res) => {
+const createJson = (id, response, res) => {
 	const html = iconv.decode(response.data, 'Shift_JIS');
 	const $ = cheerio.load(html);
 
@@ -74,7 +74,7 @@ const createJson = (response, res) => {
 
 	const totalCount = posts[posts.length - 1].postId;
 
-	res.json({ title, totalCount, lastUpdate, posts });
+	res.json({ id, title, totalCount, lastUpdate, posts });
 };
 
 module.exports.posts_get_all = [
@@ -95,7 +95,7 @@ module.exports.posts_get_all = [
 
 		axios(baseUrl + req.params.threadId, { responseType: 'arraybuffer' })
 			.then(response => {
-				createJson(response, res);
+				createJson(req.params.threadId, response, res);
 			})
 			.catch(err => {
 				if (err.response) {
@@ -125,7 +125,7 @@ module.exports.posts_get_l50 = [
 		axios(baseUrl + req.params.threadId + '/l50', {
 			responseType: 'arraybuffer'
 		})
-			.then(response => createJson(response, res))
+			.then(response => createJson(req.params.threadId, response, res))
 			.catch(err => {
 				if (err.response) {
 					res.status(err.response.status);
@@ -159,7 +159,7 @@ module.exports.posts_get_new = [
 		axios(baseUrl + req.params.threadId + '/' + req.params.postId + 'n-', {
 			responseType: 'arraybuffer'
 		})
-			.then(response => createJson(response, res))
+			.then(response => createJson(req.params.threadId, response, res))
 			.catch(err => {
 				if (err.response) {
 					res.status(err.response.status);
