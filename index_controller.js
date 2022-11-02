@@ -13,7 +13,7 @@ const createJson = (response, res) => {
 
 	const title = $('h1', html).text();
 	const thread = $('dl.thread', html);
-	let updateDate, updateTime;
+	let lastUpdate;
 	const posts = [];
 
 	const count = thread.children('dt').length;
@@ -40,8 +40,15 @@ const createJson = (response, res) => {
 		}
 
 		if (i === count - 1) {
-			updateDate = date;
-			updateTime = time;
+			if (date && time) {
+				const updateDate = date.split('(')[0];
+				const slashRegex = /\//g;
+				const hyphenDate = updateDate.replace(slashRegex, '-');
+				const updateTime = time;
+				lastUpdate = hyphenDate + 'T' + updateTime;
+			} else {
+				lastUpdate = undefined;
+			}
 		}
 
 		const messageSelector = thread.children('dd')[i];
@@ -67,7 +74,7 @@ const createJson = (response, res) => {
 
 	const totalCount = posts[posts.length - 1].postId;
 
-	res.json({ title, totalCount, updateDate, updateTime, posts });
+	res.json({ title, totalCount, lastUpdate, posts });
 };
 
 module.exports.posts_get_all = [
