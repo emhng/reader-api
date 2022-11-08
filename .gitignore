@@ -1,3 +1,9 @@
 node_modules
 
 .prettierrc
+
+Dockerfile
+
+fly.toml
+
+.dockerignore
