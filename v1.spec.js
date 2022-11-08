@@ -7,7 +7,7 @@ const app = express();
 app.use(express.urlencoded({ extended: false }));
 app.use('/', api);
 
-test('index route returns correct json', done => {
+test('Index route returns correct json', done => {
 	request(app)
 		.get('/')
 		.expect('Content-Type', /json/)
@@ -29,5 +29,31 @@ test('Returns last 50 posts for a thread', done => {
 	request(app)
 		.get('/1658502889/last50')
 		.expect('Content-Type', /json/)
+		.expect(200, done);
+});
+
+test('Returns all posts for a thread', done => {
+	request(app)
+		.get('/1658502889')
+		.expect('Content-Type', /json/)
+		.expect(200, done);
+});
+
+test('Returns newest posts for a thread', done => {
+	request(app)
+		.get('/1658502889/new/1001')
+		.expect('Content-Type', /json/)
+		.expect({
+			id: '1658502889',
+			title: 'マイナージャンル・カプ・キャラを語るスレ68',
+			totalCount: '1001',
+			posts: [
+				{
+					postId: '1001',
+					name: '2ch.net投稿限界',
+					message: '2ch.netからのレス数が1000に到達しました。'
+				}
+			]
+		})
 		.expect(200, done);
 });
