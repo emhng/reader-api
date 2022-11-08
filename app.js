@@ -11,7 +11,7 @@ app.use(cors());
 
 const limiter = rateLimit({
 	windowMs: 15 * 60 * 1000,
-	max: 50,
+	max: 100,
 	standardHeaders: true,
 	message: 'Too many requests, try again in 15 minutes'
 });
@@ -19,6 +19,8 @@ const limiter = rateLimit({
 app.use(limiter);
 
 const indexRouter = require('./index');
+const apiRouter = require('./v1');
 app.use('/', indexRouter);
+app.use('/v1', apiRouter);
 
 app.listen(PORT, () => console.log(`Server running on PORT ${PORT}`));

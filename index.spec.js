@@ -1,11 +1,11 @@
-const index = require('./index');
+const api = require('./v1');
 
 const request = require('supertest');
 const express = require('express');
 const app = express();
 
 app.use(express.urlencoded({ extended: false }));
-app.use('/', index);
+app.use('/', api);
 
 test('index route returns correct json', done => {
 	request(app)
