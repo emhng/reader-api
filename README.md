@@ -1,5 +1,7 @@
 # Reader API for Rs-Reader
 
+![Preview](preview.png)
+
 Webscraping RESTful API to get posts from a thread in the art forum (doujin board) of 2chsc.
 
 ## API Endpoints
